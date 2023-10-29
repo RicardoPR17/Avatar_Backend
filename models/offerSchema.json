@@ -1,0 +1,29 @@
+{
+  "bsonType": "object",
+  "title": "Offer Object Validation",
+  "required": ["type", "owner"],
+  "properties": {
+    "_id": { "bsonType": "string", "description": "The id of the offer" },
+    "seller": { "bsonType": "string", "description": "The email of the seller or creator of the offer" },
+    "buyer": { "bsonType": ["null", "string"], "description": "The email of the buyer of the offer, default is null" },
+    "cryptos": {
+      "bsonType": ["array"],
+      "minItems": 1,
+      "uniqueTimes": true,
+      "additionalProperties": false,
+      "items": {
+        "bsonType": ["object"],
+        "required": ["crypto", "amount", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "crypto": { "bsonType": "string", "description": "The name of the cryptocurrency to be offered" },
+          "amount": { "bsonType": "number", "description": "The amount of the cryptocurrency kind to be offered" },
+          "value": { "bsonType": "number", "description": "The price of cryptocurrendy offered" }
+        }
+      },
+      "description": "The array of cryptocurrencies to be offered"
+    },
+    "price": { "bsonType": "number", "description": "The price of the offer" },
+    "state": { "enum": ["Open", "Sold", "Canceled"], "description": "The actual state of the offer" }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "bsonType": "object",
+  "title": "User Object Validation",
+  "required": ["mail", "wallet"],
+  "properties": {
+    "mail": { "bsonType": "string", "description": "User's email" },
+    "wallet": {
+      "bsonType": ["array"],
+      "minItems": 0,
+      "uniqueTimes": true,
+      "additionalProperties": false,
+      "items": {
+        "bsonType": ["object"],
+        "required": ["crypto", "amount", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "crypto": { "bsonType": "string", "description": "The name of the cryptocurrency" },
+          "amount": { "bsonType": "number", "description": "The amount of crypto that the user owns" },
+          "value": {
+            "bsonType": "number",
+            "description": "The amount multiply by market price of the cryptocurrency"
+          }
+        }
+      },
+      "description": "The array of cryptocurrencies to be offered"
+    }
+  }
+}

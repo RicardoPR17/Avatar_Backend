@@ -1,0 +1,27 @@
+{
+  "bsonType": "object",
+  "title": "Crypto Object Validation",
+  "required": ["date", "cryptocurrencies"],
+  "properties": {
+    "date": { "bsonType": "date", "description": "Date of when the cryptocurrencies data was query" },
+    "value": {
+      "bsonType": ["array"],
+      "minItems": 10,
+      "uniqueTimes": true,
+      "additionalProperties": false,
+      "items": {
+        "bsonType": ["object"],
+        "required": ["name", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "bsonType": "string", "description": "The name of the cryptocurrency" },
+          "value": {
+            "bsonType": "number",
+            "description": "The value of the cryprocurrency in USD"
+          }
+        }
+      },
+      "description": "The array of cryptocurrencies in that moment"
+    }
+  }
+}

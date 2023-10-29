@@ -1,0 +1,1 @@
+La carpeta controllers contiene las funciones controladoras que implementan la lógica específica de tu API. Estas funciones se encargan de procesar las solicitudes HTTP, interactuar con la base de datos (si es necesario), realizar validaciones, y preparar y enviar respuestas. Los controladores encapsulan la lógica empresarial de tu aplicación.
