@@ -5,7 +5,9 @@ const router = express.Router();
 // Ruta GET: /api/users
 router.get("/db/users", users.getUsers);
 
+router.get("/db/user/:email", users.getAnUser);
+
 // Ruta POST: /api/users
-router.post("/db/users", users.postUser);
+router.post("/db/user", users.postUser);
 
 module.exports = { router };

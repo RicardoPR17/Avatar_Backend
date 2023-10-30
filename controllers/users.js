@@ -19,13 +19,30 @@ const getUsers = async (req, res) => {
   res.status(200).json(result);
 };
 
+const getAnUser = async (req, res) => {
+  const emailToSearch = req.params.email;
+  console.log(emailToSearch);
+  try {
+    if (!emailToSearch) throw new Error("Send a email to search the user");
+    const user = await usersDoc.find({ email: emailToSearch }).toArray();
+
+    if (user.length === 0) throw new Error("User not found");
+
+    res.json(user);
+  } catch (err) {
+    res.status(404).json({
+      error: err,
+    });
+  }
+};
+
 const postUser = async (req, res) => {
   try {
     const reqData = req.body;
     console.log(reqData.length === 0);
-    console.log(!('email' in reqData));
-    
-    if (reqData.length === 0 || !('email' in reqData)) throw "Invalid data";
+    console.log(!("email" in reqData));
+
+    if (reqData.length === 0 || !("email" in reqData)) throw new Error("Invalid data to add the user");
     reqData.wallet = [];
     reqData.balance = 0;
     console.log(reqData);
@@ -39,4 +56,4 @@ const postUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, postUser };
+module.exports = { getUsers, postUser, getAnUser };

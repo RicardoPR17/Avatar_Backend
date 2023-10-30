@@ -6,6 +6,7 @@ const cryptoRouter = require("./routes/crypto");
 
 dotenv.config();
 const app = express();
+app.disable("x-powered-by");
 
 //Middleware
 app.use(morgan("dev"));
