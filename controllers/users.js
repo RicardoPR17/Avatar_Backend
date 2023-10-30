@@ -19,13 +19,28 @@ const getUsers = async (req, res) => {
   res.status(200).json(result);
 };
 
+const getAnUser = async (req, res) => {
+  const emailToSearch = req.params.email;
+  console.log(emailToSearch);
+  try {
+    if (!emailToSearch) throw "Invalid data";
+    const user = await usersDoc.find({ email: emailToSearch }).toArray();
+
+    res.json(user);
+  } catch (err) {
+    res.status(404).json({
+      error: err,
+    });
+  }
+};
+
 const postUser = async (req, res) => {
   try {
     const reqData = req.body;
     console.log(reqData.length === 0);
-    console.log(!('email' in reqData));
-    
-    if (reqData.length === 0 || !('email' in reqData)) throw "Invalid data";
+    console.log(!("email" in reqData));
+
+    if (reqData.length === 0 || !("email" in reqData)) throw "Invalid data";
     reqData.wallet = [];
     reqData.balance = 0;
     console.log(reqData);
@@ -39,4 +54,4 @@ const postUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, postUser };
+module.exports = { getUsers, postUser, getAnUser };
