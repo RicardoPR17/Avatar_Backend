@@ -21,17 +21,19 @@ const getUsers = async (req, res) => {
 
 const getAnUser = async (req, res) => {
   const emailToSearch = req.params.email;
-  console.log(emailToSearch);
   try {
-    if (!emailToSearch) throw new Error("Send a email to search the user");
-    const user = await usersDoc.find({ email: emailToSearch }).toArray();
+    if (!emailToSearch) throw new Error("Send an email to search the user");
+
+    const regexEmail = new RegExp(`^${emailToSearch}`, "i");
+
+    const user = await usersDoc.find({ email: { $regex: regexEmail } }).toArray();
 
     if (user.length === 0) throw new Error("User not found");
 
     res.json(user);
   } catch (err) {
     res.status(404).json({
-      error: err,
+      error: err.message,
     });
   }
 };
