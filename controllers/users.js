@@ -65,7 +65,7 @@ const getUserBalance = async (req, res) => {
 
     const regexEmail = new RegExp(`^${emailToSearch}`, "i");
 
-    updateBalance(regexEmail).then(console.log("Actualizando para " + emailToSearch));
+    updateBalance(regexEmail);
 
     const user = await usersDoc
       .find({ email: { $regex: regexEmail } })
@@ -97,8 +97,6 @@ const updateBalance = async (emailToSearch) => {
     .toArray();
 
   while (!recentCryptos && !userWallet) {} // loop to wait until the database return the query result
-
-  console.log(userWallet);
 
   let newBalance = 0;
   let wallet = userWallet[0].wallet;
