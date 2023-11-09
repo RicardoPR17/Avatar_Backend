@@ -61,7 +61,7 @@ const postUser = async (req, res) => {
 const getUserBalance = async (req, res) => {
   const emailToSearch = req.params.email;
   try {
-    if (!emailToSearch) throw new Error("Send an email to search the user's wallet");
+    if (!emailToSearch) throw new Error("Send an email to search the user's data");
 
     const regexEmail = new RegExp(`^${emailToSearch}`, "i");
 
@@ -69,7 +69,7 @@ const getUserBalance = async (req, res) => {
 
     const user = await usersDoc
       .find({ email: { $regex: regexEmail } })
-      .project({ email: 0, wallet: 0 })
+      .project({ email: 0 })
       .toArray();
 
     if (user.length === 0) throw new Error("User not found");
@@ -126,28 +126,4 @@ const updateBalance = async (emailToSearch) => {
   }
 };
 
-const getWallet = async (req, res) => {
-  const emailToSearch = req.params.email;
-  try {
-    if (!emailToSearch) throw new Error("Send an email to search the user's wallet");
-
-    const regexEmail = new RegExp(`^${emailToSearch}`, "i");
-
-    updateBalance(regexEmail);
-
-    const user = await usersDoc
-      .find({ email: { $regex: regexEmail } })
-      .project({ wallet: 1, _id: 1})
-      .toArray();
-
-    if (user.length === 0) throw new Error("User not found");
-
-    res.json(user);
-  } catch (err) {
-    res.status(404).json({
-      error: err.message,
-    });
-  }
-};
-
-module.exports = { getUsers, postUser, getAnUser, getUserBalance, getWallet };
+module.exports = { getUsers, postUser, getAnUser, getUserBalance };
