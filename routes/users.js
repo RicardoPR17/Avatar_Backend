@@ -7,6 +7,8 @@ router.get("/db/users", users.getUsers);
 
 router.get("/db/user/:email", users.getAnUser);
 
+router.get("/db/user/:email/balance", users.getUserBalance);
+
 // Ruta POST: /api/users
 router.post("/db/user", users.postUser);
 
