@@ -109,6 +109,7 @@ const updateBalance = async (emailToSearch) => {
         let calculation = actualValues[j].value * wallet[i].amount;
         newBalance += calculation;
         updateWallet[i].value = calculation;
+        updateWallet[i].unitPrice = actualValues[j].value;
         break;
       }
     }
