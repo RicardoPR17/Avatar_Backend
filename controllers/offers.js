@@ -13,12 +13,32 @@ const database = client.db("Avatar");
 
 const offersDoc = database.collection("Offers");
 
-
 // The user must be able to see ALL the available offers on the platform.
 const getAllOffers = async (req, res) => {
-    const query = await offersDoc.find({}).toArray();
-    res.status(200).json(query);
+  const query = await offersDoc.find({}).toArray();
+  res.status(200).json(query);
 };
-    
 
-module.exports = { getAllOffers };
+// The user must be able to search the offers filtered by the name of the seller
+const getSellerOffers = async (req, res) => {
+  const emailToSearch = req.params.email;
+  try {
+    if (!emailToSearch) throw new Error("Send an email to search the seller's offers");
+
+    const regexEmail = new RegExp(`^${emailToSearch}`, "i");
+
+    const offers = await offersDoc
+      .find({ seller: { $regex: regexEmail } })
+      .project({ _id: 0 })
+      .toArray();
+
+    if (offers.length === 0) throw new Error("Offers not found");
+    res.send(offers);
+  } catch (err) {
+    res.status(404).json({
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { getAllOffers, getSellerOffers };
