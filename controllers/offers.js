@@ -63,14 +63,12 @@ const getBuyerOffers = async (req, res) => {
   }
 };
 
+// The user must be able to search the offers filtered by the cryptocurrencies
 const getOffersByCrypto = async (req, res) => {
   const cryptoName = req.params.crypto;
-  const cryptoSearch = new RegExp(`${cryptoName}`, "i");
+  const cryptoSearch = new RegExp(`${cryptoName}`, "i"); // Regexp non case sensitive to search the crypto by his name
   try {
-    const query = await offersDoc
-      .find({ "cryptos.cryptocurrency": cryptoSearch })
-      .project({ _id: 0 })
-      .toArray();
+    const query = await offersDoc.find({ "cryptos.cryptocurrency": cryptoSearch }).project({ _id: 0 }).toArray();
     if (query.length === 0) throw "Cryptocurrency not found in offers";
     res.json(query);
   } catch (err) {
