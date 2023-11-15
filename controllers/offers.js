@@ -19,7 +19,7 @@ const getAllOffers = async (req, res) => {
   res.status(200).json(query);
 };
 
-// The user must be able to search the offers filtered by the name of the seller
+// The user must be able to search the offers filtered by the email of the seller
 const getSellerOffers = async (req, res) => {
   const emailToSearch = req.params.email;
   try {
@@ -41,4 +41,26 @@ const getSellerOffers = async (req, res) => {
   }
 };
 
-module.exports = { getAllOffers, getSellerOffers };
+// The user must be able to search the offers filtered by his email as a buyer
+const getBuyerOffers = async (req, res) => {
+  const emailToSearch = req.params.email;
+  try {
+    if (!emailToSearch) throw new Error("Send an email to search the buyer's offers");
+
+    const regexEmail = new RegExp(`^${emailToSearch}`, "i");
+
+    const offers = await offersDoc
+      .find({ buyer: { $regex: regexEmail } })
+      .project({ _id: 0 })
+      .toArray();
+
+    if (offers.length === 0) throw new Error("Offers not found");
+    res.send(offers);
+  } catch (err) {
+    res.status(404).json({
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { getAllOffers, getSellerOffers, getBuyerOffers };
