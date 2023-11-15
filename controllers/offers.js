@@ -63,4 +63,19 @@ const getBuyerOffers = async (req, res) => {
   }
 };
 
-module.exports = { getAllOffers, getSellerOffers, getBuyerOffers };
+const getOffersByCrypto = async (req, res) => {
+  const cryptoName = req.params.crypto;
+  const cryptoSearch = new RegExp(`${cryptoName}`, "i");
+  try {
+    const query = await offersDoc
+      .find({ "cryptos.cryptocurrency": cryptoSearch })
+      .project({ _id: 0 })
+      .toArray();
+    if (query.length === 0) throw "Cryptocurrency not found in offers";
+    res.json(query);
+  } catch (err) {
+    res.status(404).json({ error: err });
+  }
+};
+
+module.exports = { getAllOffers, getSellerOffers, getBuyerOffers, getOffersByCrypto };
