@@ -12,7 +12,6 @@ client
 const database = client.db("Avatar");
 
 const usersDoc = database.collection("Users");
-const offersDoc = database.collection("Offers");
 
 const getUsers = async (req, res) => {
   const result = await usersDoc.find({}).toArray();

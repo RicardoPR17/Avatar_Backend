@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const userRouter = require("./routes/users");
 const cryptoRouter = require("./routes/crypto");
+const offerRouter = require("./routes/offers");
 
 dotenv.config();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/", userRouter.router);
 app.use("/", cryptoRouter.router);
+app.use("/", offerRouter.router);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
