@@ -49,8 +49,9 @@ const getCryptoData = async (req, res) => {
 const getOneCrypto = async (req, res) => {
   const cryptoName = req.params.name;
   try {
+    const cryptoSearch = new RegExp(`${cryptoName}`, "i");
     const query = await cryptosDoc
-      .find({ "cryptocurrencies.name": cryptoName })
+      .find({ "cryptocurrencies.name": cryptoSearch })
       .project({ _id: 0, date: 1, "cryptocurrencies.$": 1 })
       .sort({ date: -1 })
       .toArray();
