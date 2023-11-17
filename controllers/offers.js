@@ -15,7 +15,7 @@ const offersDoc = database.collection("Offers");
 
 // The user must be able to see ALL the available offers on the platform.
 const getAllOffers = async (req, res) => {
-  const query = await offersDoc.find({}).toArray();
+  const query = await offersDoc.find({ state: "Open"}).project({ _id: 0, buyer: 0}).toArray();
   res.status(200).json(query);
 };
 
