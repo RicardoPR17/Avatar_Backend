@@ -15,7 +15,10 @@ const offersDoc = database.collection("Offers");
 
 // The user must be able to see ALL the available offers on the platform.
 const getAllOffers = async (req, res) => {
-  const query = await offersDoc.find({ state: "Open"}).project({ _id: 0, buyer: 0}).toArray();
+  const query = await offersDoc
+    .find({ state: "Open" })
+    .project({ _id: 0, buyer: 0 })
+    .toArray();
   res.status(200).json(query);
 };
 
@@ -57,9 +60,7 @@ const getBuyerOffers = async (req, res) => {
     if (offers.length === 0) throw new Error("Offers not found");
     res.send(offers);
   } catch (err) {
-    res.status(404).json({
-      error: err.message,
-    });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -68,12 +69,15 @@ const getOffersByCrypto = async (req, res) => {
   const cryptoName = req.params.crypto;
   const cryptoSearch = new RegExp(`${cryptoName}`, "i"); // Regexp non case sensitive to search the crypto by his name
   try {
-    const query = await offersDoc.find({ "cryptos.cryptocurrency": cryptoSearch }).project({ _id: 0 }).toArray();
-    if (query.length === 0) throw "Cryptocurrency not found in offers";
+    const query = await offersDoc
+      .find({ cryptocurrency: cryptoSearch, state: "Open" })
+      .project({ _id: 0 })
+      .toArray();
+    if (query.length === 0) throw new Error("Cryptocurrency not found in offers");
     res.json(query);
   } catch (err) {
-    res.status(404).json({ error: err });
+    res.status(404).json({ error: err.message });
   }
 };
 
-module.exports = { getAllOffers, getSellerOffers, getBuyerOffers, getOffersByCrypto };
+module.exports = { getAllOffers, getOffersByCrypto };
