@@ -66,10 +66,7 @@ const getOffersByCrypto = async (req, res) => {
   const cryptoName = req.params.crypto;
   const cryptoSearch = new RegExp(`${cryptoName}`, "i"); // Regexp non case sensitive to search the crypto by his name
   try {
-    const query = await offersDoc
-      .find({ cryptocurrency: cryptoSearch, state: "Open" })
-      .project({ _id: 0 })
-      .toArray();
+    const query = await offersDoc.find({ cryptocurrency: cryptoSearch, state: "Open" }).project({ _id: 0 }).toArray();
     if (query.length === 0) throw new Error("Cryptocurrency not found in offers");
     res.json(query);
   } catch (err) {
@@ -93,13 +90,12 @@ const buyOffer = async (req, res) => {
     if (offerState == "Closed") {
       throw new Error("Sorry, someone buy this offer");
     }
-    
-    const updatedOffer = await offersDoc
-      .findOneAndUpdate(
-        { offer_id: reqData.offer },
-        { $set: { state: "Closed", buyer: reqData.buyer } },
-        { returnOriginal: false }
-      );
+
+    const updatedOffer = await offersDoc.findOneAndUpdate(
+      { offer_id: reqData.offer },
+      { $set: { state: "Closed", buyer: reqData.buyer } },
+      { returnOriginal: false }
+    );
     while (!updatedOffer) {}
     let sellerEmail = offerData[0].seller;
 
@@ -115,10 +111,16 @@ const buyOffer = async (req, res) => {
     let buyerWallet = buyerUser[0].wallet;
     let buyerWalletUpdate = updateBuyerWallet(buyerWallet, cryptocurrency, amount);
 
-    const updatedSeller = await usersDoc
-      .findOneAndUpdate({ email: sellerEmail }, { $set: { wallet: sellerWalletUpdate } }, { returnOriginal: false });
-    const updatedBuyer = await usersDoc
-      .findOneAndUpdate({ email: reqData.buyer }, { $set: { wallet: buyerWalletUpdate } }, { returnOriginal: false });
+    const updatedSeller = await usersDoc.findOneAndUpdate(
+      { email: sellerEmail },
+      { $set: { wallet: sellerWalletUpdate } },
+      { returnOriginal: false }
+    );
+    const updatedBuyer = await usersDoc.findOneAndUpdate(
+      { email: reqData.buyer },
+      { $set: { wallet: buyerWalletUpdate } },
+      { returnOriginal: false }
+    );
 
     while (!updatedSeller && !updatedBuyer) {}
     res.status(201).send({ message: "Transaction completed successfully!" });
@@ -159,4 +161,4 @@ const updateBuyerWallet = (buyerWallet, cryptocurrency, amount) => {
   return updated;
 };
 
-module.exports = { getAllOffers, getOffersByCrypto };
+module.exports = { getAllOffers, buyOffer };
