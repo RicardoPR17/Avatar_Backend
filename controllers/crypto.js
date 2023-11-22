@@ -29,12 +29,9 @@ const uploadTop10Cryptocurrencies = async () => {
     const top10Criptocurrencies = response.data;
     const result = { date: new Date(Date.now()).toISOString(), cryptocurrencies: [] };
 
-    // console.log("Top 10 Cryptocurrencies:");
     top10Criptocurrencies.forEach((cripto, index) => {
-      // console.log(`${index + 1}. ${cripto.name} (${cripto.symbol}): $${cripto.current_price}`);
       result.cryptocurrencies.push({ name: cripto.name, value: cripto.current_price });
     });
-    // console.log(result);
     await cryptosDoc.insertOne(result);
   } catch (error) {
     console.error("Error getting the top 10 cryptocurrencies:", error.message);
@@ -54,8 +51,9 @@ const getOneCrypto = async (req, res) => {
       .find({ "cryptocurrencies.name": cryptoSearch })
       .project({ _id: 0, date: 1, "cryptocurrencies.$": 1 })
       .sort({ date: -1 })
+      .limit(15)
       .toArray();
-    if (query.length === 0) throw "Cryptocurrency not found";
+    if (query.length === 0) throw new Error("Cryptocurrency not found");
     res.json(query);
   } catch (err) {
     res.status(404).json({ error: err });
