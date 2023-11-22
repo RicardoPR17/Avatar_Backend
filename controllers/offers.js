@@ -57,9 +57,7 @@ const getBuyerOffers = async (req, res) => {
     if (offers.length === 0) throw new Error("Offers not found");
     res.send(offers);
   } catch (err) {
-    res.status(404).json({
-      error: err.message,
-    });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -68,11 +66,14 @@ const getOffersByCrypto = async (req, res) => {
   const cryptoName = req.params.crypto;
   const cryptoSearch = new RegExp(`${cryptoName}`, "i"); // Regexp non case sensitive to search the crypto by his name
   try {
-    const query = await offersDoc.find({ "cryptos.cryptocurrency": cryptoSearch }).project({ _id: 0 }).toArray();
+    const query = await offersDoc
+      .find({ cryptocurrency: cryptoSearch, state: "Open" })
+      .project({ _id: 0 })
+      .toArray();
     if (query.length === 0) throw new Error("Cryptocurrency not found in offers");
     res.json(query);
   } catch (err) {
-    res.status(404).json({ error: err });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -92,7 +93,7 @@ const buyOffer = async (req, res) => {
     if (offerState == "Closed") {
       throw new Error("Sorry, someone buy this offer");
     }
-    console.log(reqData.buyer);
+    
     const updatedOffer = await offersDoc
       .findOneAndUpdate(
         { offer_id: reqData.offer },
@@ -158,4 +159,4 @@ const updateBuyerWallet = (buyerWallet, cryptocurrency, amount) => {
   return updated;
 };
 
-module.exports = { getAllOffers, getSellerOffers, getBuyerOffers, getOffersByCrypto, buyOffer };
+module.exports = { getAllOffers, getOffersByCrypto };
