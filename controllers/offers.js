@@ -33,6 +33,7 @@ const buyOffer = async (req, res) => {
 
     let offerState = offerData[0].state;
     if (offerState == "Closed") {
+      res.status(410);
       throw new Error("Sorry, someone buy this offer");
     }
 
