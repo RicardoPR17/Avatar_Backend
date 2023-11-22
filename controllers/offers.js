@@ -33,7 +33,6 @@ const buyOffer = async (req, res) => {
 
     let offerState = offerData[0].state;
     if (offerState == "Closed") {
-      res.status(410);
       throw new Error("Sorry, someone buy this offer");
     }
 
@@ -78,7 +77,7 @@ const buyOffer = async (req, res) => {
 const updateSellerWallet = (sellerWallet, cryptocurrency, amount) => {
   let updated = sellerWallet;
   for (let i = 0; i < sellerWallet.length; i++) {
-    if (sellerWallet[i].name == cryptocurrency) {
+    if (sellerWallet[i].crypto == cryptocurrency) {
       updated[i].amount -= amount;
       if (updated[i].amount == 0) {
         updated.splice(i, 1);
@@ -94,7 +93,7 @@ const updateBuyerWallet = (buyerWallet, cryptocurrency, amount) => {
   // Check if the buyer has the cryptocurrency. If it does, add the amount. Otherwise, add this cryptocurrency to its wallet
   let cryptoFound = false;
   for (let i = 0; i < buyerWallet.length; i++) {
-    if (buyerWallet[i].name == cryptocurrency) {
+    if (buyerWallet[i].crypto == cryptocurrency) {
       updated[i].amount += amount;
       cryptoFound = true;
       break;
