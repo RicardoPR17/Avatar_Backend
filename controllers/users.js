@@ -40,19 +40,16 @@ const getAnUser = async (req, res) => {
 const postUser = async (req, res) => {
   try {
     const reqData = req.body;
-    console.log(reqData.length === 0);
-    console.log(!("email" in reqData));
 
     if (reqData.length === 0 || !("email" in reqData)) throw new Error("Invalid data to add the user");
     reqData.wallet = [];
     reqData.balance = 0;
-    console.log(reqData);
     const newAdded = await usersDoc.insertOne(reqData);
 
     res.status(201).json(newAdded);
   } catch (err) {
     res.status(400).json({
-      error: err,
+      error: err.message,
     });
   }
 };
