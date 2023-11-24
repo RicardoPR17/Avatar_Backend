@@ -15,8 +15,16 @@ const database = client.db("Avatar");
 const usersDoc = database.collection("Users");
 
 const getUsers = async (req, res) => {
-  const result = await usersDoc.find({}).toArray();
-  res.status(200).json(result);
+  try {
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
+    const result = await usersDoc.find({}).toArray();
+    res.status(200).json(result);
+  } catch (err) {
+    res.json({ error: err.message });
+  }
 };
 
 const getAnUser = async (req, res) => {
