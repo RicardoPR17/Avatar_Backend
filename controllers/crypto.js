@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { MongoClient } = require("mongodb");
+const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -39,13 +40,25 @@ const uploadTop10Cryptocurrencies = async () => {
 };
 
 const getCryptoData = async (req, res) => {
-  const query = await cryptosDoc.find({}).sort({ date: -1 }).toArray();
-  res.json(query);
+  try {
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
+    const query = await cryptosDoc.find({}).sort({ date: -1 }).toArray();
+    res.json(query);
+  } catch (err) {
+    res.json({ error: err.message });
+  }
 };
 
 const getOneCrypto = async (req, res) => {
-  const cryptoName = req.params.name;
   try {
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
+    const cryptoName = req.params.name;
     const cryptoSearch = new RegExp(`${cryptoName}`, "i");
     const query = await cryptosDoc
       .find({ "cryptocurrencies.name": cryptoSearch })
@@ -53,15 +66,22 @@ const getOneCrypto = async (req, res) => {
       .sort({ date: -1 })
       .limit(15)
       .toArray();
-    if (query.length === 0) throw new Error("Cryptocurrency not found");
+    if (query.length === 0) {
+      res.status(404);
+      throw new Error("Cryptocurrency not found");
+    }
     res.json(query);
   } catch (err) {
-    res.status(404).json({ error: err });
+    res.json({ error: err.mmesage });
   }
 };
 
 const getLastCryptoData = async (req, res) => {
   try {
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
     const query = await cryptosDoc
       .find({})
       .project({ _id: 0, date: 1, cryptocurrencies: 1 })
@@ -70,7 +90,7 @@ const getLastCryptoData = async (req, res) => {
       .toArray();
     res.json(query);
   } catch (err) {
-    res.status(500).json({ error: err });
+    res.json({ error: err.message });
   }
 };
 

@@ -1,4 +1,5 @@
 const { MongoClient } = require("mongodb");
+const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -21,29 +22,42 @@ const getUsers = async (req, res) => {
 const getAnUser = async (req, res) => {
   const emailToSearch = req.params.email;
   try {
-    if (!emailToSearch) throw new Error("Send an email to search the user");
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    } else if (!emailToSearch) {
+      res.status(400);
+      throw new Error("Send an email to search the user");
+    }
 
     const regexEmail = new RegExp(`^${emailToSearch}`, "i");
 
     const user = await usersDoc.find({ email: { $regex: regexEmail } }).toArray();
 
-    if (user.length === 0) throw new Error("User not found");
+    if (user.length === 0) {
+      res.status(404);
+      throw new Error("User not found");
+    }
 
     res.json(user);
   } catch (err) {
-    res.status(404).json({
-      error: err.message,
-    });
+    res.json({ error: err.message });
   }
 };
 
 const postUser = async (req, res) => {
   try {
-    const reqData = req.body;
-    console.log(reqData.length === 0);
-    console.log(!("email" in reqData));
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
 
-    if (reqData.length === 0 || !("email" in reqData)) throw new Error("Invalid data to add the user");
+    const reqData = req.body;
+
+    if (reqData.length === 0 || !("email" in reqData)) {
+      res.status(400);
+      throw new Error("Invalid data to add the user");
+    }
     reqData.wallet = [];
     reqData.balance = 0;
     console.log(reqData);
@@ -51,16 +65,22 @@ const postUser = async (req, res) => {
 
     res.status(201).json(newAdded);
   } catch (err) {
-    res.status(400).json({
-      error: err,
-    });
+    res.json({ error: err.message });
   }
 };
 
 const getUserBalance = async (req, res) => {
-  const emailToSearch = req.params.email;
   try {
-    if (!emailToSearch) throw new Error("Send an email to search the user's data");
+    if (!validateAzureJWT(req)) {
+      res.status(401);
+      throw new Error("Invalid authorization");
+    }
+
+    const emailToSearch = req.params.email;
+    if (!emailToSearch) {
+      res.status(400);
+      throw new Error("Send an email to search the user's data");
+    }
 
     const regexEmail = new RegExp(`^${emailToSearch}`, "i");
 
@@ -71,13 +91,14 @@ const getUserBalance = async (req, res) => {
       .project({ email: 0 })
       .toArray();
 
-    if (user.length === 0) throw new Error("User not found");
+    if (user.length === 0) {
+      res.status(404);
+      throw new Error("User not found");
+    }
 
     res.json(user);
   } catch (err) {
-    res.status(404).json({
-      error: err.message,
-    });
+    res.json({ error: err.message });
   }
 };
 
@@ -126,4 +147,4 @@ const updateBalance = async (emailToSearch) => {
   }
 };
 
-module.exports = { getUsers, postUser, getAnUser, getUserBalance };
+module.exports = { getUsers, getAnUser, getUserBalance };
