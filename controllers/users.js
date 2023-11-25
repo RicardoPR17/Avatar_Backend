@@ -68,7 +68,6 @@ const postUser = async (req, res) => {
     }
     reqData.wallet = [];
     reqData.balance = 0;
-    console.log(reqData);
     const newAdded = await usersDoc.insertOne(reqData);
 
     res.status(201).json(newAdded);
