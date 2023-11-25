@@ -1,4 +1,5 @@
 const axios = require("axios");
+const socketIO = require("socket.io");
 const { MongoClient } = require("mongodb");
 const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
@@ -14,6 +15,8 @@ client
 const database = client.db("Avatar");
 
 const cryptosDoc = database.collection("Cryptos");
+
+const io = new socketIO.Server(5555, { cors: { origin: "http://localhost:3000" } });
 
 const uploadTop10Cryptocurrencies = async () => {
   try {
@@ -34,6 +37,8 @@ const uploadTop10Cryptocurrencies = async () => {
       result.cryptocurrencies.push({ name: cripto.name, value: cripto.current_price });
     });
     await cryptosDoc.insertOne(result);
+
+    io.emit("data", [result]);
   } catch (error) {
     console.error("Error getting the top 10 cryptocurrencies:", error.message);
   }
@@ -96,4 +101,4 @@ const getLastCryptoData = async (req, res) => {
 
 module.exports = { getCryptoData, getOneCrypto, getLastCryptoData };
 
-setInterval(uploadTop10Cryptocurrencies, 900000); // Get cryptocurrencies price every 15min = 9000000ms
+setInterval(uploadTop10Cryptocurrencies, 60000); // Get cryptocurrencies price every 15min = 9000000ms
