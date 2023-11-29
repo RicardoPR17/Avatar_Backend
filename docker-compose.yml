@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
-      - "4444:4444"
+      - "80:80"
       - "5555:5555"
     volumes:
       - /node_modules
