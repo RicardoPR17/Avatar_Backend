@@ -9,6 +9,7 @@ const offerRouter = require("./routes/offers");
 dotenv.config();
 const app = express();
 app.disable("x-powered-by");
+process.env.NODE_OPTIONS = "--max-old-space-size=2048";
 
 //Middleware
 app.use(morgan("dev"));

@@ -1,11 +1,11 @@
 {
   "name": "avatar-backend",
-  "description": "",
+  "description": "Na'Vi Broker Backend",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./server/app.js"
+    "dev": "nodemon ./server/app.js --max-old-space-size=4096"
   },
   "author": "Ricardo P",
   "license": "ISC",

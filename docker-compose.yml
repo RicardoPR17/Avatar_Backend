@@ -1,0 +1,16 @@
+version: '1'
+
+services:
+  docker-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: navi-backend
+    container_name: navi-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "4444:4444"
+      - "5555:5555"
+    volumes:
+      - /node_modules

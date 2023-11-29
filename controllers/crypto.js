@@ -16,7 +16,7 @@ const database = client.db("Avatar");
 
 const cryptosDoc = database.collection("Cryptos");
 
-const io = new socketIO.Server(5555, { cors: { origin: "http://localhost:3000" } });
+const io = new socketIO.Server(5555, { cors: { origin: "*" } });
 
 const uploadTop10Cryptocurrencies = async () => {
   try {
@@ -39,6 +39,7 @@ const uploadTop10Cryptocurrencies = async () => {
     await cryptosDoc.insertOne(result);
 
     io.emit("data", [result]);
+    console.log("emit");
   } catch (error) {
     console.error("Error getting the top 10 cryptocurrencies:", error.message);
   }
@@ -101,4 +102,4 @@ const getLastCryptoData = async (req, res) => {
 
 module.exports = { getCryptoData, getOneCrypto, getLastCryptoData };
 
-setInterval(uploadTop10Cryptocurrencies, 60000); // Get cryptocurrencies price every 15min = 9000000ms
+setInterval(uploadTop10Cryptocurrencies, 60000); // Get cryptocurrencies price every 1min = 60000ms
