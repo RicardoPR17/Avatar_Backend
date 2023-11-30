@@ -88,11 +88,6 @@ describe("GET db/user/:email/balance", () => {
     expect(response.headers["content-type"]).toEqual(expect.stringContaining("application/json"));
   });
 
-  //test("should respond if no email to search is sent", async () => {
-  //const response = await request(app).get("/db/user//balance");
-  //expect(response.body).toEqual(expect.objectContaining({ error: "Send an email to search the user's data"}));
-  //});
-
   test("should verify the user's balance", async () => {
     const response = await request(app).get(
       "/db/user/jessica.munoz-o_mail.escuelaing.edu.co#EXT#@avatarnavi.onmicrosoft.com/balance"

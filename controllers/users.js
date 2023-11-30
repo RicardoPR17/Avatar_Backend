@@ -84,10 +84,6 @@ const getUserBalance = async (req, res) => {
     }
 
     const emailToSearch = req.params.email;
-    if (!emailToSearch) {
-      res.status(400);
-      throw new Error("Send an email to search the user's data");
-    }
 
     const regexEmail = new RegExp(`^${emailToSearch}`, "i");
 
