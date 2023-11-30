@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --coverage",
     "dev": "nodemon ./server/app.js --max-old-space-size=4096"
   },
   "author": "Ricardo P",
