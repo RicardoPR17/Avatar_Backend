@@ -16,7 +16,7 @@ const database = client.db("Avatar");
 
 const cryptosDoc = database.collection("Cryptos");
 
-const io = new socketIO.Server(process.env.PORT_SOCKET, { cors: { origin: "*" } });
+const io = new socketIO.Server(27017, { cors: { origin: "*" } });
 
 const uploadTop10Cryptocurrencies = async () => {
   try {

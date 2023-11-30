@@ -11,6 +11,6 @@ services:
     env_file: .env
     ports:
       - "80:80"
-      - "5555:5555"
+      - "27017:27017"
     volumes:
       - /node_modules
