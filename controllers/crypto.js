@@ -4,7 +4,6 @@ const { MongoClient } = require("mongodb");
 const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
 dotenv.config();
-const sock = require("../app");
 const client = new MongoClient(process.env.MONGO_URI);
 
 client
@@ -16,7 +15,7 @@ const database = client.db("Avatar");
 
 const cryptosDoc = database.collection("Cryptos");
 
-const io = new socketIO.Server(sock, { cors: { origin: "*" } });
+const io = new socketIO.Server(3001, { cors: { origin: "*" } });
 
 const uploadTop10Cryptocurrencies = async () => {
   try {
