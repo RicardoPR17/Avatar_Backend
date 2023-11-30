@@ -1,7 +1,5 @@
 const axios = require("axios");
-const socketIO = require("socket.io");
 const { MongoClient } = require("mongodb");
-const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -15,8 +13,6 @@ client
 const database = client.db("Avatar");
 
 const cryptosDoc = database.collection("Cryptos");
-
-const io = new socketIO.Server(5555, { cors: { origin: "http://localhost:3000" } });
 
 const uploadTop10Cryptocurrencies = async () => {
   try {
@@ -37,33 +33,19 @@ const uploadTop10Cryptocurrencies = async () => {
       result.cryptocurrencies.push({ name: cripto.name, value: cripto.current_price });
     });
     await cryptosDoc.insertOne(result);
-
-    io.emit("data", [result]);
   } catch (error) {
     console.error("Error getting the top 10 cryptocurrencies:", error.message);
   }
 };
 
 const getCryptoData = async (req, res) => {
-  try {
-    if (!validateAzureJWT(req)) {
-      res.status(401);
-      throw new Error("Invalid authorization");
-    }
-    const query = await cryptosDoc.find({}).sort({ date: -1 }).toArray();
-    res.json(query);
-  } catch (err) {
-    res.json({ error: err.message });
-  }
+  const query = await cryptosDoc.find({}).sort({ date: -1 }).toArray();
+  res.json(query);
 };
 
 const getOneCrypto = async (req, res) => {
+  const cryptoName = req.params.name;
   try {
-    if (!validateAzureJWT(req)) {
-      res.status(401);
-      throw new Error("Invalid authorization");
-    }
-    const cryptoName = req.params.name;
     const cryptoSearch = new RegExp(`${cryptoName}`, "i");
     const query = await cryptosDoc
       .find({ "cryptocurrencies.name": cryptoSearch })
@@ -71,22 +53,15 @@ const getOneCrypto = async (req, res) => {
       .sort({ date: -1 })
       .limit(15)
       .toArray();
-    if (query.length === 0) {
-      res.status(404);
-      throw new Error("Cryptocurrency not found");
-    }
+    if (query.length === 0) throw new Error("Cryptocurrency not found");
     res.json(query);
   } catch (err) {
-    res.json({ error: err.mmesage });
+    res.status(404).json({ error: err.message });
   }
 };
 
 const getLastCryptoData = async (req, res) => {
   try {
-    if (!validateAzureJWT(req)) {
-      res.status(401);
-      throw new Error("Invalid authorization");
-    }
     const query = await cryptosDoc
       .find({})
       .project({ _id: 0, date: 1, cryptocurrencies: 1 })
@@ -95,10 +70,10 @@ const getLastCryptoData = async (req, res) => {
       .toArray();
     res.json(query);
   } catch (err) {
-    res.json({ error: err.message });
+    res.status(500).json({ error: err });
   }
 };
 
 module.exports = { getCryptoData, getOneCrypto, getLastCryptoData };
 
-setInterval(uploadTop10Cryptocurrencies, 60000); // Get cryptocurrencies price every 15min = 9000000ms
+setInterval(uploadTop10Cryptocurrencies, 900000); // Get cryptocurrencies price every 15min = 9000000ms

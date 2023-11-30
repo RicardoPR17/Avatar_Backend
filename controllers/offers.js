@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-const { validateAzureJWT } = require("./tokenValidator");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -16,27 +15,15 @@ const offersDoc = database.collection("Offers");
 
 // The user must be able to see ALL the available offers on the platform.
 const getAllOffers = async (req, res) => {
-  try {
-    if (!validateAzureJWT(req)) {
-      res.status(401);
-      throw new Error("Invalid authorization");
-    }
-
-    const query = await offersDoc.find({ state: "Open" }).project({ _id: 0, buyer: 0 }).sort({ offer_id: 1 }).toArray();
-    res.status(200).json(query);
-  } catch (err) {
-    res.json({ error: err.message });
-  }
+  const query = await offersDoc.find({ state: "Open" }).project({ _id: 0, buyer: 0 }).toArray();
+  res.status(200).json(query);
 };
 
 // The user must be able to buy an offer and get the cryptos
 const buyOffer = async (req, res) => {
   const reqData = req.body;
   try {
-    if (!validateAzureJWT(req)) {
-      res.status(401);
-      throw new Error("Invalid authorization");
-    } else if (reqData.length === 0 || !("offer" in reqData) || !("buyer" in reqData)) {
+    if (reqData.length === 0 || !("offer" in reqData) || !("buyer" in reqData)) {
       res.status(400);
       throw new Error("Invalid data to buy an offer");
     }
