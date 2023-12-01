@@ -11,4 +11,4 @@
 | Laura Nathalia Garcia Acuña |  Scrum Team   |
 |   Ricardo Pulido Rentería   | Scrum Master  |
 
-**Nota:** Para ejecutar, usar comando `npm run dev`
+**Nota:** Para ejecutar, usar comando `npm start`
